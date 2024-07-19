@@ -7,8 +7,10 @@ interface Car {
 }
 
 const searchText = ref('')
+
 const carList = ref<Car[]>([])
 const car = ref<Car>()
+
 const carFounded = ref(false)
 const isAddableCar = ref(false)
 
@@ -17,19 +19,21 @@ const message = ref('')
 
 const searchCarByWheelsText = ref('')
 
+const BASE_API_URL = import.meta.env.VITE_API_BASE_URL
+
 async function getCarByName() {
   isAddableCar.value = false
 
   if (searchText.value === 'all') {
     try {
-      const response = await fetch(`http://localhost:8080/api/v1/cars`)
+      const response = await fetch(`${BASE_API_URL}/cars`)
       carList.value = await response.json()
     } catch (error) {
       message.value = 'There is not a car in the list!'
     }
   } else
     try {
-      const response = await fetch(`http://localhost:8080/api/v1/cars/${searchText.value}`)
+      const response = await fetch(`${BASE_API_URL}/${searchText.value}`)
       car.value = await response.json()
 
       if (car.value) {
@@ -43,9 +47,7 @@ async function getCarByName() {
 
 async function getCarByWheels() {
   try {
-    const response = await fetch(
-      `http://localhost:8080/api/v1/cars/wheels/${searchCarByWheelsText.value}`
-    )
+    const response = await fetch(`${BASE_API_URL}/cars/wheels/${searchCarByWheelsText.value}`)
     carList.value = await response.json()
 
     console.log(carList.value)
@@ -63,7 +65,7 @@ async function addNewCar() {
       body: JSON.stringify({ name: searchText.value, wheels: newWheels.value })
     }
 
-    const response = await fetch(`http://localhost:8080/api/v1/cars/add`, requestOptions)
+    const response = await fetch(`${BASE_API_URL}/cars/add`, requestOptions)
     const res = await response.json()
 
     if (res) {
@@ -120,31 +122,4 @@ watch(searchCarByWheelsText, () => {
   </div>
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-}
-</style>
+<style scoped></style>
